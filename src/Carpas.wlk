@@ -9,7 +9,7 @@ class Carpa {
 	
 	method cantDePersonas() = listaDePersonas.size()
 	
-	method cantDePersonasEsPar() = self.cantDePersonas() % 2 == 0
+	method cantDePersonasEsPar() = self.cantDePersonas().even()
 	
 	method corroborarIngreso(unaPersona) = 
 	self.cantDePersonas() + 1 <= limiteDeGente && !unaPersona.estaEbria()
@@ -18,12 +18,16 @@ class Carpa {
 	
 	method servirJarraA(unaPersona, capacidadDeJarra) {
 		if (self.estaEnLaCarpa(unaPersona))
-		unaPersona.comprarJarra(new Jarra(marca=marcaDeCerveza, capacidad=capacidadDeJarra))
+		unaPersona.comprarJarra(new Jarra(marca=marcaDeCerveza, capacidad=capacidadDeJarra, carpaServida = self))
 		else self.error("La persona no se encuentra en la carpa")
 		}
 		
 	method estaEnLaCarpa(unaPersona) = listaDePersonas.contains(unaPersona)
 	
 	method cantDeEbriosEmpedernidos() = listaDePersonas.count({p=> p.ebrioEmpedernido()})
+	
+	method esHomogenea() = listaDePersonas.all({p => p.paisOrigen() == listaDePersonas.first().paisOrigen()})
+	
+	method asistentesNoServidos() = listaDePersonas.filter({p => p.carpasDondeFueronServidos().all({carpa => carpa != self})})
 	
 }	

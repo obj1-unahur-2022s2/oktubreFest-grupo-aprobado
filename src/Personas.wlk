@@ -29,6 +29,34 @@ class Persona {
 	method ebrioEmpedernido() = self.estaEbria() && self.todasMayoresA1Lt()
 	
 	method esPatriota() = jarrasQueCompro.all({j=>j.marca().paisFabricante() == paisOrigen})
+	
+	method carpasDondeFueronServidos() = jarrasQueCompro.map({j => j.carpaServida()})
+	
+	method estaEntrandoEnElVicio() {
+		var estado = false
+		if (jarrasQueCompro.size() > 1) {
+			estado = self.seEstaEnviciando(jarrasQueCompro)
+		}
+		return estado
+	}
+	
+	method seEstaEnviciando(listaJarras) {
+		var vicio = true
+		if (listaJarras.size() > 1) {
+			if (listaJarras.first().capacidad() <= listaJarras.get(1).capacidad()) {
+				vicio = self.seEstaEnviciando(listaJarras.subList(1, listaJarras.size()-1))
+			}
+			else {
+				vicio = false
+			}
+		}
+		return vicio
+	}
+	
+	method sonCompatibles(persona) = self.coincidencias(persona).size() > self.diferencias(persona).size()
+	method marcasCompradas() = jarrasQueCompro.map({j => j.marca()}).asSet()
+	method coincidencias(persona) = self.marcasCompradas().intersection(persona.marcasCompradas())
+	method diferencias(persona) = self.marcasCompradas().difference(persona.marcasCompradas())
 }
 
 class Belga inherits Persona {

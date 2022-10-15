@@ -24,6 +24,7 @@ class Roja inherits Negra {
 class Jarra {
 	const property capacidad
 	const property marca
+	const property carpaServida
 	
 	method contenidoDeAlcohol() {return marca.graduacion()/100 * capacidad} 
 }

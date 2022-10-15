@@ -2,6 +2,8 @@ import Marcas.*
 import Personas.*
 import Carpas.*
 
+//Los tests fueron creados antes de añadir el atributo /carpaServida/, por lo que daran errores, ya que las jarras con el nuevo atributo deben ser asignadas desde la carpa. Dicho esto, los tests funcionaban hasta esta adicion
+
 describe "Test requerimientos primera parte" {
 	
 	var melisa = new Aleman(peso= 70, nivelDeAguante= 5, gustoPorMusicaTradicional= false, paisOrigen= "Alemania")
