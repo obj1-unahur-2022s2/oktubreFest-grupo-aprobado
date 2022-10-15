@@ -1,0 +1,126 @@
+import Marcas.*
+import Personas.*
+import Carpas.*
+
+describe "Test requerimientos segunda parte" {
+	
+		var melisa = new Aleman(peso= 70, nivelDeAguante= 5, gustoPorMusicaTradicional= false, paisOrigen= "Alemania")
+		var lucas = new Checo(peso= 85, nivelDeAguante= 10, gustoPorMusicaTradicional= true, paisOrigen= "Checoslovaquia")
+		var hernan = new Belga(peso= 60, nivelDeAguante= 3.2, gustoPorMusicaTradicional= false, paisOrigen= "Belgica")
+		var guinness = new Negra(contenidoDeLupulo = 3, paisFabricante = "Alemania")
+		var imperial = new Roja(contenidoDeLupulo = 1.5, paisFabricante = "Rusia")
+		var quilmes = new Rubia(contenidoDeLupulo = 2, paisFabricante = "Belgica", graduacion = 4.9)
+		var wasteiner = new Rubia(contenidoDeLupulo = 5, paisFabricante = "Alemania", graduacion = 3.8)
+		var porter = new Negra(contenidoDeLupulo = 10, paisFabricante = "Inglaterra")
+		var carpa1 = new Carpa(limiteDeGente= 2,tieneBandaDeMusicaTrad=true, marcaDeCerveza= porter)
+		var carpa2 = new Carpa(limiteDeGente= 4,tieneBandaDeMusicaTrad=false, marcaDeCerveza= guinness)
+		var carpa3 = new Carpa(limiteDeGente= 10,tieneBandaDeMusicaTrad=false, marcaDeCerveza= porter)
+		var carpa4 = new Carpa(limiteDeGente= 8,tieneBandaDeMusicaTrad=false, marcaDeCerveza= quilmes)
+		
+	method initialize() {
+		graduacionMundial.graduacionCervezaNegra(10)
+	}
+	
+	test "Lucas quiere entrar a la carpa1 con musica tradicional y que venden Porter" {
+		assert.that(lucas.quiereEntrarA(carpa1))
+	}
+	
+	test "Lucas no quiere entrar a la carpa3 sin musica tradicional y que venden Porter" {
+		assert.notThat(lucas.quiereEntrarA(carpa3))
+	}
+	
+	test "Hernan no quiere entrar a la carpa4 sin musica tradicional y que venden Quilmes" {
+		assert.notThat(hernan.quiereEntrarA(carpa4))
+	}
+	
+	test "Melisa quiere entrar a la carpa2 sin musica tradicional,en donde venden Guinness y hay 2 personas adentro" {
+		carpa2.ingresarPersona(lucas)
+		carpa2.ingresarPersona(hernan)
+		assert.that(melisa.quiereEntrarA(carpa2))
+	}
+	
+	test "Melisa no quiere entrar a la carpa2 sin musica tradicional,en donde venden Porter y hay 1 persona adentro" {
+		carpa2.ingresarPersona(hernan)
+		assert.notThat(melisa.quiereEntrarA(carpa2))
+	}
+	
+	test "La carpa2 deja ingresar a Melisa que no está ebria " {
+		assert.notThat(melisa.estaEbria())
+		assert.that(carpa1.corroborarIngreso(melisa))
+	}
+	
+	test "La carpa2 no deja ingresar a Hernan porque está ebrio" {
+		hernan.comprarJarra(new Jarra(capacidad = 5, marca = wasteiner))
+		assert.that(hernan.estaEbria())
+		assert.notThat(carpa2.corroborarIngreso(hernan))
+	}
+	
+	test "La carpa1 no deja ingresar a Hernan porque está ebrio y la capacidad ya está completa" {
+		hernan.comprarJarra(new Jarra(capacidad = 5, marca = wasteiner))
+		assert.that(hernan.estaEbria())
+		carpa1.ingresarPersona(melisa)
+		carpa1.ingresarPersona(lucas)
+		assert.notThat(carpa1.corroborarIngreso(hernan))
+	}
+	
+	test "La carpa1 no deja ingresar a Lucas porque su capacidad ya está completa" {
+		carpa1.ingresarPersona(melisa)
+		carpa1.ingresarPersona(hernan)
+		assert.notThat(carpa1.corroborarIngreso(lucas))
+	}
+		
+	test "Lucas puede entrar a la carpa1" {
+		assert.that(lucas.puedeEntrarA(carpa1))
+	}
+	
+	test "Hernan no puede entrar a la carpa1 porque no quiere, no le gusta la musica tradicional" {
+		assert.notThat(hernan.puedeEntrarA(carpa1))
+	}
+	
+	test "Melisa no puede entrar a la carpa3 porque no la dejan, está ebria" {
+		melisa.comprarJarra(new Jarra(capacidad = 4, marca = guinness))
+		assert.that(melisa.estaEbria())
+		assert.notThat(melisa.puedeEntrarA(carpa3))
+	}
+	
+	test "Lucas ingresa a la carpa1" {
+		lucas.ingresarA(carpa1)
+		assert.equals([lucas], carpa1.listaDePersonas())
+	}
+	
+	test "Melisa quiere pero no puede ingresar a la carpa3, está ebria" {
+		melisa.comprarJarra(new Jarra(capacidad = 4, marca = guinness))
+		assert.throwsExceptionWithMessage("No puede ingresar a la carpa",{melisa.ingresarA(carpa3)})
+	}
+	
+	test "la carpa1 le sirve una jarra de Imperial a Lucas" {
+		lucas.ingresarA(carpa1)
+		carpa1.servirJarraA(lucas, 2)
+		assert.equals([porter],lucas.jarrasQueCompro())
+	}
+	
+	test "la carpa3 no le puede servir una jarra a Melisa porque no está en la carpa" {
+		assert.throwsExceptionWithMessage("La persona no se encuentra en la carpa",{carpa3.servirJarraA(melisa, 1)})
+	}
+	
+	test "En la carpa2 hay 2 ebrios empedernidos" {
+		carpa2.ingresarPersona(lucas)
+		carpa2.ingresarPersona(hernan)
+		carpa2.ingresarPersona(melisa)
+		carpa2.servirJarraA(lucas, 4)
+		carpa2.servirJarraA(hernan, 5)
+		carpa2.servirJarraA(melisa, 0.75)
+		assert.equals(2, carpa2.cantDeEbriosEmpedernidos())
+	}
+	
+	test "Melisa es patriota" {
+		melisa.comprarJarra(new Jarra(capacidad=1,marca=guinness))
+		melisa.comprarJarra(new Jarra(capacidad=0.5,marca=wasteiner))
+		assert.that(melisa.esPatriota())
+		
+	test "Hernan no es patriota" {
+		hernan.comprarJarra(new Jarra(capacidad=2,marca=quilmes))
+		hernan.comprarJarra(new Jarra(capacidad=1.75,marca=porter))
+		assert.notThat(hernan.esPatriota())
+	}
+}

@@ -1,0 +1,61 @@
+import Marcas.*
+import Personas.*
+import Carpas.*
+
+describe "Test requerimientos primera parte" {
+	
+	var melisa = new Aleman(peso= 70, nivelDeAguante= 5, gustoPorMusicaTradicional= false, paisOrigen= "Alemania")
+	var lucas = new Checo(peso= 85, nivelDeAguante= 10, gustoPorMusicaTradicional= true, paisOrigen= "Checoslovaquia")
+	var hernan = new Belga(peso= 60, nivelDeAguante= 3.2, gustoPorMusicaTradicional= false, paisOrigen= "Belgica")
+	var guinness = new Negra(contenidoDeLupulo = 3, paisFabricante = "Alemania")
+	var imperial = new Roja(contenidoDeLupulo = 1.5, paisFabricante = "Rusia")
+	var quilmes = new Rubia(contenidoDeLupulo = 2, paisFabricante = "Belgica", graduacion = 4.9)
+	var wasteiner = new Rubia(contenidoDeLupulo = 5, paisFabricante = "Alemania", graduacion = 3.8)
+	var porter = new Negra(contenidoDeLupulo = 10, paisFabricante = "Inglaterra")
+	
+	test "El contenido de alcohol en una jarra de 1 lt. de Wasteiner es de 0.038"{
+		var jarraWasteiner = new Jarra(capacidad = 1, marca = wasteiner)
+		assert.equals(0.038, jarraWasteiner.contenidoDeAlcohol())
+	}
+	
+	test "Melisa no está ebria despues de una jarra de 1 lt de Wasteiner" {
+		melisa.comprarJarra(new Jarra(capacidad = 1, marca = wasteiner))
+		assert.notThat(melisa.estaEbria())
+		}
+	
+	test "Melisa está ebria despues de una jarra de 5 lt de Wasteiner" {
+		melisa.comprarJarra(new Jarra(capacidad = 5, marca = wasteiner))
+		assert.that(melisa.estaEbria())
+		}
+	
+	test "Lucas tomó 2 jarras de 1 lt de guinness y 1 de 0.5 de Imperial. El total de alcohol que consumió fue de 0.11875" {
+		lucas.comprarJarra(new Jarra(capacidad = 1, marca = guinness))
+		lucas.comprarJarra(new Jarra(capacidad = 1, marca = guinness))
+		lucas.comprarJarra(new Jarra(capacidad = 0.5, marca = imperial))
+		assert.equals(0.11875, lucas.totalDeAlcohol())
+	}
+	
+	test "A Hernan le gusta la Wasteiner" {
+		assert.that(hernan.leGusta(wasteiner))
+	}
+	
+	test "A Hernan no le gusta la Quilmes" {
+		assert.notThat(hernan.leGusta(quilmes))
+	}
+	
+	test "A Melisa le gustan todas las cervezas" {
+		assert.that(melisa.leGusta(wasteiner))
+		assert.that(melisa.leGusta(quilmes))
+		assert.that(melisa.leGusta(guinness))
+		assert.that(melisa.leGusta(porter))
+	}
+	
+	test "A Lucas le gusta la Porter" {
+		graduacionMundial.graduacionCervezaNegra(10)
+		assert.that(lucas.leGusta(porter))
+	}
+	
+	test "A Lucas no le gusta la Quilmes" {
+		assert.notThat(lucas.leGusta(quilmes))
+	}
+}
